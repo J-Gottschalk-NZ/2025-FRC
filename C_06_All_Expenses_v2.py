@@ -1,4 +1,5 @@
 import pandas
+from tabulate import tabulate
 
 
 def not_blank(question):
@@ -117,9 +118,11 @@ def get_expenses(exp_type, how_many):
 
     # make expense frame into a string with the desired columns
     if exp_type == "variable":
-        expense_string = expense_frame.to_string(index=False)
+        expense_string = tabulate(expense_frame, headers='keys',
+                                  tablefmt='psql', showindex=False)
     else:
-        expense_string = expense_frame[['Item', 'Cost']].to_string(index=False)
+        expense_string = tabulate(expense_frame[['Item', 'Cost']], headers='keys',
+                                  tablefmt='psql', showindex=False)
 
     # return the expenses panda and subtotal
     return expense_string, subtotal
