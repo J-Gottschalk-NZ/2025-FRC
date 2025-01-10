@@ -53,13 +53,13 @@ def get_expenses(exp_type, how_many):
     # Lists for panda
     all_items = []
     all_amounts = []
-    all_costs = []
+    all_dollar_per_item = []
 
     # Expenses dictionary
     expenses_dict = {
         "Item": all_items,
         "Amount": all_amounts,
-        "Cost": all_costs
+        "$ / Item": all_dollar_per_item
     }
 
     # default amount to 1 for fixed expenses and
@@ -98,13 +98,19 @@ def get_expenses(exp_type, how_many):
 
         all_items.append(item_name)
         all_amounts.append(amount)
-        all_costs.append(cost)
+        all_dollar_per_item.append(cost)
 
     # make panda
     expense_frame = pandas.DataFrame(expenses_dict)
 
-    # return all items for now so we can check loop.
-    return expense_frame
+    # Calculate Row Cost
+    expense_frame['Cost'] = expense_frame['Amount'] * expense_frame['$ / Item']
+
+    # calculate subtotal
+    subtotal = expense_frame['Cost'].sum()
+
+    # return the expenses panda and subtotal
+    return expense_frame, subtotal
 
 
 # Main routine starts here
@@ -116,4 +122,18 @@ print()
 print("Getting Variable Costs...")
 variable_expenses = get_expenses("variable", quantity_made)
 print()
-print(variable_expenses)
+variable_panda = variable_expenses[0]
+variable_subtotal = variable_expenses[1]
+
+print(variable_panda)
+print(variable_subtotal)
+print()
+
+print("Getting Fixed Costs...")
+fixed_expenses = get_expenses("fixed", quantity_made)
+print()
+fixed_panda = fixed_expenses[0]
+fixed_subtotal = fixed_expenses[1]
+
+print(fixed_panda)
+print(fixed_subtotal)
