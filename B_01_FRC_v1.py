@@ -278,7 +278,7 @@ for item in to_write:
     print(item)
 
 # create file to hold data (add .txt extension)
-file_name = "FRC_{}_{}_{}".format(year, month, day)
+file_name = f"{product_name}_{year}_{month}_{day}"
 write_to = "{}.txt".format(file_name)
 
 text_file = open(write_to, "w+")
