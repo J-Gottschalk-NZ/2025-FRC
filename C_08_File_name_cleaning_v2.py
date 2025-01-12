@@ -1,4 +1,3 @@
-import re
 def clean_filename(raw_filename):
     """Check filename has not illegal characters and is not too long"""
 
