@@ -47,7 +47,7 @@ def num_check(question, num_type="float", exit_code=None):
             print(error)
 
 
-def get_expenses(exp_type, how_many):
+def get_expenses(exp_type, how_many=1):
     """Gets variable / fixed expenses and outputs
     panda (as a string) and a subtotal of the expenses"""
 
@@ -64,7 +64,7 @@ def get_expenses(exp_type, how_many):
     }
 
     # defaults for fixed expenses
-    amount = 1
+    amount = how_many   # how_many defaults to 1
     how_much_question = "How much? $"
 
     # loop to get expenses
@@ -90,6 +90,7 @@ def get_expenses(exp_type, how_many):
             amount = num_check(f"How many <enter for {how_many}>: ",
                                "integer", "")
 
+            # Allow users to push <enter> to default to number of items being made
             if amount == "":
                 amount = how_many
 
@@ -105,7 +106,7 @@ def get_expenses(exp_type, how_many):
     # make panda
     expense_frame = pandas.DataFrame(expenses_dict)
 
-    # Calculate Row Cost
+    # Calculate Cost Column
     expense_frame['Cost'] = expense_frame['Amount'] * expense_frame['$ / Item']
 
     # calculate subtotal
@@ -146,7 +147,7 @@ variable_panda = variable_expenses[0]
 variable_subtotal = variable_expenses[1]
 
 print("Getting Fixed Costs...")
-fixed_expenses = get_expenses("fixed", quantity_made)
+fixed_expenses = get_expenses("fixed")
 print()
 fixed_panda = fixed_expenses[0]
 fixed_subtotal = fixed_expenses[1]

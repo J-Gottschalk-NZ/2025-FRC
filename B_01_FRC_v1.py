@@ -99,7 +99,7 @@ def num_check(question, num_type="float", exit_code=None):
             print(error)
 
 
-def get_expenses(exp_type, how_many):
+def get_expenses(exp_type, how_many=1):
     """Gets variable / fixed expenses and outputs
     panda (as a string) and a subtotal of the expenses"""
 
@@ -116,7 +116,7 @@ def get_expenses(exp_type, how_many):
     }
 
     # defaults for fixed expenses
-    amount = 1
+    amount = how_many   # how_many defaults to 1
     how_much_question = "How much? $"
 
     # loop to get expenses
@@ -142,6 +142,7 @@ def get_expenses(exp_type, how_many):
             amount = num_check(f"How many <enter for {how_many}>: ",
                                "integer", "")
 
+            # Allow users to push <enter> to default to number of items being made
             if amount == "":
                 amount = how_many
 
@@ -157,7 +158,7 @@ def get_expenses(exp_type, how_many):
     # make panda
     expense_frame = pandas.DataFrame(expenses_dict)
 
-    # Calculate Row Cost
+    # Calculate Cost Column
     expense_frame['Cost'] = expense_frame['Amount'] * expense_frame['$ / Item']
 
     # calculate subtotal
@@ -188,7 +189,10 @@ def currency(x):
 # Main routine goes here
 
 # intialise variables...
-fixed_subtotal = 0  # assume we have no fixed expenses for now
+
+# assume we have no fixed expenses for now
+fixed_subtotal = 0
+fixed_panda_string = ""
 
 print(make_statement("Fund Raising Calulator", "💰"))
 
@@ -217,21 +221,22 @@ print()
 has_fixed = yes_no_check("Do you have fixed expenses? ")
 
 if has_fixed == "yes":
-    fixed_expenses = get_expenses("fixed", quantity_made)
+    fixed_expenses = get_expenses("fixed")
 
     fixed_panda_string = fixed_expenses[0]
     fixed_subtotal = fixed_expenses[1]
 
-    # check that user entered at least one item!
-    if fixed_expenses == 0:
+    # If the user has not entered any fixed expenses,
+    # # Set empty panda to "" so that it does not display!
+    if fixed_subtotal == 0:
         has_fixed = "no"
+        fixed_panda_string = ""
+
+total_expenses = variable_subtotal + fixed_subtotal
+total_expenses_string = f"Total Expenses: ${total_expenses:.2f}"
+
 
 # Get profit Goal here.
-
-# set strings / headings if we have no fixed costs!!
-if has_fixed == "no":
-    fixed_panda_string = ""
-
 
 # strings / output area
 
@@ -257,11 +262,15 @@ if has_fixed == "yes":
 
 # set fixed cost strings to blank if we don't have fixed costs
 else:
-    fixed_heading_string = ""
-    fixed_subtotal_string = "There were not fixed expenses (ie: subtotal $0.00)."
+    fixed_heading_string = make_statement("You have no Fixed Expenses", "-")
+    fixed_subtotal_string = "Fixed Expenses Subtotal: $0.00"
 
 # List of strings to be outputted / written to file
-to_write = []
+to_write = [main_heading_string, quantity_string,
+            "\n", variable_heading_string, variable_panda_string,
+            variable_subtotal_string,
+            "\n", fixed_heading_string, fixed_panda_string,
+            fixed_subtotal_string, total_expenses_string]
 
 # Print area
 print()
